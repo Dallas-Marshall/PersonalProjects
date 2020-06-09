@@ -35,6 +35,12 @@ WORD_FILE = 'words.txt'
 
 def main():
     """Program is a game of hangman where user tries to guess a random word."""
+
+    guesses = []
+    letters_guessed = []
+    incorrect_guesses = 0
+
+    print("Starting Game!")
     words = read_words()
     word = pick_word(words)
 
@@ -44,47 +50,60 @@ def main():
         if letter not in letters_in_word:
             letters_in_word.append(letter)
 
-    guesses = []
-    letters_guessed = []
-    incorrect_guesses = 0
-
     while len(letters_guessed) != len(letters_in_word) and incorrect_guesses < NUMBER_GUESSES_ALLOWED:
-        crypto_word = ''
-        for letter in word:
-            if letter not in guesses:
-                crypto_word += '*'
-            else:
-                crypto_word += letter
-        print(crypto_word)
+        crypto_word = get_crypto_word(word, guesses)
 
-        guess = get_valid_guess(letters_guessed, incorrect_guesses, guesses)
+        guess = get_valid_guess(crypto_word, letters_guessed, incorrect_guesses, guesses)
         guesses.append(guess)
+
         if guess in word:
             letters_guessed.append(guess)
+            print("{} is in the word\n".format(guess))
         else:
             incorrect_guesses += 1
+            print("{} is not in the word\n".format(guess))
+
+    if not incorrect_guesses == NUMBER_GUESSES_ALLOWED:
+        print("You successfully guessed {}!".format(word))
+    else:
+        print("Game Over!\nThe word was: {}".format(word))
 
 
-def get_valid_guess(letters_guessed, incorrect_guesses, guesses):
+def get_crypto_word(word, guesses):
+    crypto_word = ''
+    for letter in word:
+        if letter not in guesses:
+            crypto_word += '*'
+        else:
+            crypto_word += letter
+    return crypto_word
+
+
+def get_valid_guess(crypto_word, letters_guessed, incorrect_guesses, guesses):
     """Display guesses and get valid user guess."""
     is_valid_guess = False
     while not is_valid_guess:
+        print(crypto_word)
         if len(guesses) != 0:
             print("Previous Guesses: ", end='')
             print(*guesses, sep=',')
             print("Guesses Remaining: {}".format((NUMBER_GUESSES_ALLOWED - incorrect_guesses)))
         guess = input("Guess a letter: ")
+
+        # check guess is valid
         if guess.isalpha() and guess not in letters_guessed and len(guess) == 1 and guess not in guesses:
             is_valid_guess = True
             return guess.lower()
-        if not guess.isalpha():
-            print("Invalid (not a Letter)")
-        if guess in letters_guessed:
-            print("Letter already guessed!")
-        if len(guess) != 1:
-            print("Only guess one letter at a time!")
-        if guess in guesses:
-            print("You have already guessed {}".format(guess))
+        else:
+            if not guess.isalpha():
+                print("Invalid (not a Letter)")
+            if guess in letters_guessed:
+                print("Letter already guessed!")
+            if len(guess) != 1:
+                print("Only guess one letter at a time!")
+            if guess in guesses:
+                print("You have already guessed {}".format(guess))
+            print('\n')
 
 
 def read_words():
