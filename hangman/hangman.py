@@ -37,14 +37,18 @@ def main():
     """Program is a game of hangman where user tries to guess a random word."""
     words = read_words()
     word = pick_word(words)
-    # print(word)
+
+    # Count number of unique letters
+    letters_in_word = []
+    for letter in word:
+        if letter not in letters_in_word:
+            letters_in_word.append(letter)
+
     guesses = []
     letters_guessed = []
     incorrect_guesses = 0
 
-    while len(letters_guessed) != len(word) and incorrect_guesses < NUMBER_GUESSES_ALLOWED: # bug more than 1 of letter
-        # print(len(letters_guessed))
-        # print(len(word))
+    while len(letters_guessed) != len(letters_in_word) and incorrect_guesses < NUMBER_GUESSES_ALLOWED:
         crypto_word = ''
         for letter in word:
             if letter not in guesses:
