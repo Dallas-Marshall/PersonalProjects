@@ -19,10 +19,11 @@ def main():
     menu_selection = get_valid_menu_selection()
     while menu_selection.upper() != 'Q':
 
+        # change to guesses remaining
         guesses = []
         letters_guessed = []
-        incorrect_guesses = 0
         game_variables = set_game_variables(menu_selection)
+        remaining_guesses = game_variables[1]
         word = pick_word(words, game_variables[0])
         print("\nStarting Game!")
 
@@ -32,30 +33,24 @@ def main():
             if letter not in letters_in_word:
                 letters_in_word.append(letter)
 
-        while len(letters_guessed) != len(letters_in_word) and incorrect_guesses < game_variables[1]:
+        while len(letters_guessed) != len(letters_in_word) and remaining_guesses != 0:
             crypto_word = get_crypto_word(word, guesses)
-            print(crypto_word)
-            if len(guesses) != 0:
-                print("Previous Guesses: ", end='')
-                print(*guesses, sep=',')
-                print("Guesses Remaining: {}".format((game_variables[1] - incorrect_guesses)))
 
-            guess = get_valid_guess(letters_guessed, guesses)
+            guess = get_valid_guess(letters_guessed, guesses, crypto_word, game_variables, remaining_guesses)
             guesses.append(guess)
             if guess in word:
                 letters_guessed.append(guess)
                 print("\n{} is in the word".format(guess))
             else:
-                incorrect_guesses += 1
+                remaining_guesses -= 1
                 print("\n{} is not in the word".format(guess))
 
-        if not incorrect_guesses == game_variables[1]:
+        if remaining_guesses != 0:
             print("You successfully guessed {}!\n".format(word))
         else:
             print("Game Over!\nThe word was: {}\n".format(word))
-        menu_selection = input(
-            "Welcome!\nPlease Select from the Following Menu:\n'Q' - Quit\n'E' - Easy\n'N' - Normal\n'H' - Hard\n>>> ")
-    print("Thanks for Playing!")
+        menu_selection = get_valid_menu_selection()
+        print("Thanks for Playing!")
 
 
 def get_crypto_word(word, guesses):
@@ -69,20 +64,20 @@ def get_crypto_word(word, guesses):
     return crypto_word
 
 
-def get_valid_guess(letters_guessed, guesses):
+def get_valid_guess(letters_guessed, guesses, crypto_word, game_variables, remaining_guesses):
     """Get valid user guess."""
     is_valid_guess = False
     while not is_valid_guess:
+        display_hud(crypto_word, guesses, remaining_guesses)
         guess = input("Guess a letter: ")
         # check guess is valid
         if guess.isalpha() and guess not in letters_guessed and len(guess) == 1 and guess not in guesses:
             is_valid_guess = True
             return guess.lower()
         else:
+            print('\n')
             if not guess.isalpha():
                 print("Invalid (not a Letter)")
-            if guess in letters_guessed:
-                print("Letter already guessed!")
             if len(guess) != 1:
                 print("Please guess one letter at a time!")
             if guess in guesses:
@@ -142,6 +137,14 @@ def get_valid_menu_selection():
                 return menu_selection
         except AttributeError:
             print("\nInvalid Selection")
+
+
+def display_hud(crypto_word, guesses, remaining_guesses):
+    print(crypto_word)
+    if len(guesses) != 0:
+        print("Previous Guesses: ", end='')
+        print(*guesses, sep=',')
+        print("Guesses Remaining: {}".format(remaining_guesses))
 
 
 if __name__ == '__main__':
