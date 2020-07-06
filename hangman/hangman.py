@@ -144,7 +144,7 @@ def display_hud(crypto_word, guesses, remaining_guesses):
     if len(guesses) != 0:
         print("Previous Guesses: ", end='')
         print(*guesses, sep=',')
-        print("Guesses Remaining: {}".format(remaining_guesses))
+        print("Incorrect Guesses Remaining: {}".format(remaining_guesses))
 
 
 if __name__ == '__main__':
