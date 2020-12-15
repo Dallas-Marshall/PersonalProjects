@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+from Item import Item
 from catalogue import Catalogue
 from store import Store
 
@@ -63,6 +64,42 @@ async def remove_store(ctx, *, store_name):
             catalogue.remove_store(store.name)
             catalogue.save_stores(PATH_TO_DATA_FILE)
     await stores(ctx)
+
+
+@client.command()
+async def add_item(ctx, *, details):
+    item_details = details.split(':')
+    embed = discord.Embed(title=f'Error in add_item', color=0xff0000)
+    if len(item_details) == 4:
+        store_name = item_details[0].strip()
+        item_name = item_details[1].strip()
+        item_quantity = item_details[2].strip()
+        item_cost = item_details[3].strip()
+
+        catalogue = Catalogue()
+        catalogue.load_stores(PATH_TO_DATA_FILE)
+        is_valid_name = False
+        for store in catalogue.list_stores():
+            if store.name.lower() == store_name.lower():
+                is_valid_name = True
+                # Add new Item to store inventory
+                new_item = Item(item_name, item_quantity, int(item_cost))
+                store.inventory.add_item(new_item)
+                # Update save file
+                catalogue.save_stores(PATH_TO_DATA_FILE)
+                embed = discord.Embed(title='Item Added Successfully', color=0xff0000)
+                embed.add_field(name=f'{item_name}', value=f'{item_quantity} / {item_cost}D')
+
+            if not is_valid_name:
+                embed = discord.Embed(title='Error in add_item', color=0xff0000)
+                embed.add_field(name=f'{store_name}', value='cannot be found')
+    else:
+        embed = discord.Embed(title='Error in add_item', color=0xff0000)
+        embed.add_field(name='Please use the following format',
+                        value='!add_item store_name : item_name : item_quantity : item_cost\nFor example !add_item '
+                              'Mobs Melons : Cooked Chicken : 2 Stacks : 1', inline=False)
+        embed.add_field(name='Cooked Chicken', value='2 Stacks / 1D')
+    await ctx.send(embed=embed)
 
 
 client.run('TOKEN GOES HERE')
