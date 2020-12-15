@@ -1,4 +1,4 @@
-class Shop:
+class Store:
     """Shop class to represent details of a store."""
 
     def __init__(self, name="", location_x=0, location_y="", description="", inventory=None):
