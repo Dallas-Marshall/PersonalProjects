@@ -1,6 +1,6 @@
 from Inventory import Inventory
 from Item import Item
-from shop import Shop
+from store import Store
 
 INDEX_OF_NAME = 0
 INDEX_OF_LOCATION_X = 1
@@ -24,7 +24,7 @@ class Catalogue:
         """Return number of Store objects."""
         return len(self.stores)
 
-    def list_catalogue(self):
+    def list_stores(self):
         """Returns list of stores."""
         return self.stores
 
@@ -33,12 +33,10 @@ class Catalogue:
         self.stores.append(store)
 
     def remove_store(self, store_name):
-        """Remove a Store from the list of stores."""
+        """Remove a Store from the list of stores if it exists."""
         for store in self.stores:
             if store.name == store_name:
                 self.stores.remove(store)
-            else:
-                return False
 
     def load_stores(self, path_to_file):
         """Read the file containing Stores and add to list."""
@@ -72,7 +70,7 @@ class Catalogue:
             shop_location_y = line_str[INDEX_OF_LOCATION_Y]
             shop_description = line_str[INDEX_OF_DESCRIPTION]
 
-            shop = Shop(shop_name, shop_location_x, shop_location_y, shop_description, shop_inventory)
+            shop = Store(shop_name, shop_location_x, shop_location_y, shop_description, shop_inventory)
             self.stores.append(shop)
         in_file.close()
 
@@ -82,8 +80,11 @@ class Catalogue:
         for shop in self.stores:
             out_file.write(f'{shop.name},{shop.location_x},{shop.location_y},{shop.description},')
 
+            if len(shop.inventory) == 0:
+                out_file.write('\n')
+
             for i in range(0, len(shop.inventory)):
-                shop_inventory = shop.inventory.list_inventory()
+                shop_inventory = shop.inventory.list_items()
                 name = shop_inventory[i].name
                 quantity = shop_inventory[i].quantity
                 cost = shop_inventory[i].cost
