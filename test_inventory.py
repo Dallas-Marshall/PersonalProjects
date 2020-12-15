@@ -16,7 +16,7 @@ def run_tests():
     inv.add_item(Item("Green Wool", "2 Stacks", 2))
 
     # Test list_inventory
-    for item in inv.list_inventory():
+    for item in inv.list_items():
         print(item)
 
 

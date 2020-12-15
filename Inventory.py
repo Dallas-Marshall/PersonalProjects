@@ -9,7 +9,7 @@ class Inventory:
         """Return number of Store objects."""
         return len(self.items)
 
-    def list_inventory(self):
+    def list_items(self):
         return self.items
 
     def add_item(self, item):
