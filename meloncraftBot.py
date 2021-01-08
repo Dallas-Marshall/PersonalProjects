@@ -10,6 +10,9 @@ PATH_TO_DATA_FILE = "store_saves.csv"
 intents = discord.Intents(messages=True, guilds=True, reactions=True, members=True, presences=True)
 client = commands.Bot(command_prefix='!', intents=intents)
 
+# Remove default help command
+client.remove_command("help")
+
 
 @client.event
 async def on_ready():
@@ -99,6 +102,29 @@ async def add_item(ctx, *, details):
                         value='!add_item store_name : item_name : item_quantity : item_cost\nFor example !add_item '
                               'Mobs Melons : Cooked Chicken : 2 Stacks : 1', inline=False)
         embed.add_field(name='Cooked Chicken', value='2 Stacks / 1D')
+    await ctx.send(embed=embed)
+
+
+@client.command(pass_context=True)
+async def help(ctx):
+    embed = discord.Embed(title="Meloncraft Bot Help", color=0xff0000)
+    embed.add_field(name="!stores", value="Returns list of all stores.", inline=False)
+    # add_store
+    embed.add_field(
+        name="!add_store <Store_Name> : <x-Coord> : <y-Coord> : <Description>"
+             "\n\te.g. !add_store Big W : 0 : 502 : Lowest Prices Everyday",
+        value="Adds Store to list of stores.", inline=False)
+    # remove_store
+    embed.add_field(name="!remove_store <Store_Name>\n\te.g. !remove_store Big W",
+                    value="Removes Store from list of stores.", inline=False)
+    # list_inventory
+    embed.add_field(name="!list_inventory <Store_Name>\n\te.g. !list_inventory Big W",
+                    value="Returns list of items for sale at Store.", inline=False)
+    # add_item
+    embed.add_field(
+        name="!add_item <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>"
+             "\n\te.g. !add_item Big W : Iron : 2 Stacks : 1",
+        value="Adds Item to list of items for sale at Store.", inline=False)
     await ctx.send(embed=embed)
 
 
