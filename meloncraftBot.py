@@ -72,7 +72,7 @@ async def remove_store(ctx, *, store_name):
 @client.command()
 async def add_item(ctx, *, details):
     item_details = details.split(':')
-    embed = discord.Embed(title=f'Error in add_item', color=0xff0000)
+    embed = discord.Embed()
     if len(item_details) == 4:
         store_name = item_details[0].strip()
         item_name = item_details[1].strip()
@@ -81,10 +81,11 @@ async def add_item(ctx, *, details):
 
         catalogue = Catalogue()
         catalogue.load_stores(PATH_TO_DATA_FILE)
-        is_valid_name = False
+        is_valid_store_name = False
         for store in catalogue.list_stores():
             if store.name.lower() == store_name.lower():
-                is_valid_name = True
+                is_valid_store_name = True
+
                 # Add new Item to store inventory
                 new_item = Item(item_name, item_quantity, int(item_cost))
                 store.inventory.add_item(new_item)
@@ -93,15 +94,13 @@ async def add_item(ctx, *, details):
                 embed = discord.Embed(title='Item Added Successfully', color=0xff0000)
                 embed.add_field(name=f'{item_name}', value=f'{item_quantity} / {item_cost}D')
 
-            if not is_valid_name:
-                embed = discord.Embed(title='Error in add_item', color=0xff0000)
-                embed.add_field(name=f'{store_name}', value='cannot be found')
+        if not is_valid_store_name:
+            embed = discord.Embed(title=f'Store: \'{store_name}\' cannot be found', color=0xff0000)
     else:
-        embed = discord.Embed(title='Error in add_item', color=0xff0000)
-        embed.add_field(name='Please use the following format',
-                        value='!add_item store_name : item_name : item_quantity : item_cost\nFor example !add_item '
-                              'Mobs Melons : Cooked Chicken : 2 Stacks : 1', inline=False)
-        embed.add_field(name='Cooked Chicken', value='2 Stacks / 1D')
+        embed = discord.Embed(title="Error: Please use the following format", color=0xff0000)
+        embed.add_field(name="!add_item <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>",
+                        value="\te.g. !add_item Big W : Iron : 2 Stacks : 1", inline=False)
+        embed.add_field(name="Iron", value="2 Stacks / 1D")
     await ctx.send(embed=embed)
 
 
@@ -125,6 +124,40 @@ async def help(ctx):
         name="!add_item <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>"
              "\n\te.g. !add_item Big W : Iron : 2 Stacks : 1",
         value="Adds Item to list of items for sale at Store.", inline=False)
+    await ctx.send(embed=embed)
+
+
+@client.command()
+async def remove_item(ctx, *, details):
+    item_details = details.split(':')
+    embed = discord.Embed()
+    if len(item_details) == 2:
+        store_name = item_details[0].strip()
+        item_name = item_details[1].strip()
+
+        catalogue = Catalogue()
+        catalogue.load_stores(PATH_TO_DATA_FILE)
+        is_valid_store_name = False
+        for store in catalogue.list_stores():
+            if store.name.lower() == store_name.lower():
+                is_valid_store_name = True
+
+                is_removed = False
+                # Attempt to remove Item from store inventory
+                is_removed = store.inventory.remove_item(item_name)
+                if not is_removed:
+                    embed = discord.Embed(title=f'Item: \'{item_name}\' cannot be found', color=0xff0000)
+                else:
+                    # Update save file
+                    catalogue.save_stores(PATH_TO_DATA_FILE)
+                    embed = discord.Embed(title='Item Removed Successfully', color=0xff0000)
+
+        if not is_valid_store_name:
+            embed = discord.Embed(title=f'Store Name: \'{store_name}\' cannot be found', color=0xff0000)
+    else:
+        embed = discord.Embed(title="Error: Please use the following format", color=0xff0000)
+        embed.add_field(name="!remove_item <Store_Name> : <Item_Name>",
+                        value="\te.g. !remove_item Big W : Iron", inline=False)
     await ctx.send(embed=embed)
 
 
