@@ -15,10 +15,11 @@ class Inventory:
     def add_item(self, item):
         self.items.append(item)
 
-    def remove_store(self, item_name):
-        """Remove an Item from the list of items."""
+    def remove_item(self, item_name):
+        """Remove an Item from the list of items.
+        :returns boolean: True if item is successfully removed.
+        """
         for item in self.items:
-            if item.name == item_name:
+            if item.name.lower() == item_name.lower():
                 self.items.remove(item)
-            else:
-                return False
+                return True
