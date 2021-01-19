@@ -1,34 +1,44 @@
-"""Script to create new subject folders and weekly folders (1-13) for a new semester in my JCU One Drive."""
+"""
+Script to create new subject folders and weekly folders (1-13) for a new Study Period.
+Hierarchy Structure for each Subject:
+    Year (e.g. '2021')
+        Study Period (e.g. 'Study Period 01')
+            Week Folders 1-13 (e.g 'Week 01')
+"""
 
 import os
 
-number_of_subjects = int(input("Number of Subjects: "))
-year = input("Year: ")
-study_period = input("Study period: ")
+print("Welcome to my Automatic University Folder Creator:")
+print("--- Created by Dallas Marshall")
+print("Program will create folders in a specified directory with the following hierarchy structure for each Subject:")
+print("\tYear (e.g. '2021')\n\t\tStudy Period (e.g. 'Study Period 01')\n\t\t\tWeek Folders 1-13 (e.g 'Week 01')\n")
+
+path_to_directory = input(
+    'Path to Parent Directory (Where you want the year file to be placed) e.g. /Users/name/OneDrive: ')
+year = input("Year of Study: ")
+study_period = int(input("Study Period # (e.g. 1): "))
+number_of_subjects = int(input("Number of Subjects Studied: "))
+
 subject_codes = []
 for subject in range(number_of_subjects):
     subject_code = input("Subject Code: ")
     subject_codes.append(subject_code)
 
-os.chdir('/Users/marsh/OneDrive - James Cook University')
-
-# check if year exists (already had a study period in that year)
+os.chdir(path_to_directory)
 is_dir = os.path.isdir(year)
-if not is_dir:
+if not is_dir:  # Year directory doesn't already exist
     os.makedirs(year)
 
-os.chdir(os.path.join('/Users/marsh/OneDrive - James Cook University', year))
+os.chdir(os.path.join(path_to_directory, year))  # Move into year directory
 
-# form study period directory name following my naming convention
-study_period_file_name = "StudyPeriod0{}".format(study_period)
-os.makedirs(study_period_file_name)
-os.chdir(os.path.join('/Users/marsh/OneDrive - James Cook University', year, study_period_file_name))
+study_period_file_name = "StudyPeriod{:02d}".format(study_period)
+is_dir = os.path.isdir(study_period_file_name)
+if not is_dir:  # Study Period directory doesn't already exist
+    os.makedirs(study_period_file_name)
 
-# create each directory for each subject code and add weekly folders 1-13 following naming conventions.
+os.chdir(os.path.join(path_to_directory, year, study_period_file_name))  # Move into study period directory
+
 for subject_code in subject_codes:
     os.makedirs(os.path.join(os.getcwd(), subject_code))
-    for i in range(1, 14):
-        if i < 10:
-            os.makedirs(os.path.join(os.getcwd(), subject_code, "Week0{}".format(i)))
-        else:
-            os.makedirs(os.path.join(os.getcwd(), subject_code, "Week{}".format(i)))
+    for week_number in range(1, 14):  # Folders for weeks 1-13
+        os.makedirs(os.path.join(os.getcwd(), subject_code, "Week{:02d}".format(week_number)))
