@@ -114,6 +114,7 @@ async def help(ctx, *args):
         embed.add_field(name="!list_inventory", value="Returns list of items for sale at Store.", inline=False)
         embed.add_field(name="!add_item", value="Adds an Item to list of items for sale at Store.", inline=False)
         embed.add_field(name="!remove_item", value="Removes an Item to list of items for sale at Store.", inline=False)
+        embed.add_field(name="!update_item", value="Updates an existing Item in Stores inventory.", inline=False)
         embed.add_field(name="For detailed command specific help:", value="Use !help <command_name> e.g. !help stores",
                         inline=False)
     elif len(args) == 1:  # command specified
@@ -136,6 +137,11 @@ async def help(ctx, *args):
         elif requested_command_name == "remove_item":
             embed.add_field(name="!remove_item <Store_Name> : <Item_Name>",
                             value="\te.g. !remove_item All Australian Wool : Red Wool", inline=False)
+        elif requested_command_name == "update_item":
+            embed.add_field(
+                name="!update_item <Store_Name> : <Old_Item_Name> : <New_Item_Name> : <New_Item_Quantity> : "
+                     "<New_Item_Cost>",
+                value="\t!update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
         else:  # unknown command
             embed = discord.Embed(title="Error", color=0xff0000)
             embed.add_field(name=f'Command \'{requested_command_name}\', could not be found.',
@@ -174,6 +180,48 @@ async def remove_item(ctx, *, details):
         embed = discord.Embed(title="Error: Please use the following format", color=0xff0000)
         embed.add_field(name="!remove_item <Store_Name> : <Item_Name>",
                         value="\te.g. !remove_item All Australian Wool : Red Wool", inline=False)
+    await ctx.send(embed=embed)
+
+
+@client.command(aliases=['edit_item', 'edit', 'update'])
+async def update_item(ctx, *, details):
+    item_details = details.split(':')
+    embed = discord.Embed()
+    if len(item_details) == 5:  # Enough arguments provided
+        store_name = item_details[0].strip()
+        old_item_name = item_details[1].strip()
+        new_item_name = item_details[2].strip()
+        new_item_quantity = item_details[3].strip()
+        new_item_cost = int(item_details[4].strip())
+
+        catalogue = Catalogue()
+        catalogue.load_stores(PATH_TO_DATA_FILE)
+        is_valid_store_name = False
+        for store in catalogue.list_stores():
+            if store.name.lower() == store_name.lower():
+                is_valid_store_name = True
+                # Attempt to remove old Item from inventory
+                is_removed = store.inventory.remove_item(old_item_name)
+                if not is_removed:
+                    embed = discord.Embed(title=f'Item: \'{old_item_name}\' cannot be found', color=0xff0000)
+                else:
+                    # Add updated Item
+                    updated_item = Item(new_item_name, new_item_quantity, new_item_cost)
+                    store.inventory.add_item(updated_item)
+
+                    # Update save file
+                    catalogue.save_stores(PATH_TO_DATA_FILE)
+                    embed = discord.Embed(title='Item Updated Successfully', color=0xff0000)
+                    embed.add_field(name=f'{new_item_name}', value=f'{new_item_quantity} / {new_item_cost}D')
+
+        if not is_valid_store_name:
+            embed = discord.Embed(title=f'Store: \'{store_name}\' cannot be found', color=0xff0000)
+    else:
+        embed = discord.Embed(title="Error: Please use the following format", color=0xff0000)
+        embed.add_field(name="!update_item <Store_Name> : <Old_Item_Name> : <New_Item_Name> : <New_Item_Quantity> : "
+                             "<New_Item_Cost>",
+                        value="\t!update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
+        embed.add_field(name="Blue Wool", value="2 Stacks / 1D")
     await ctx.send(embed=embed)
 
 
