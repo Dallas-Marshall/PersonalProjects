@@ -33,10 +33,13 @@ class Catalogue:
         self.stores.append(store)
 
     def remove_store(self, store_name):
-        """Remove a Store from the list of stores if it exists."""
+        """Remove a Store from the list of stores if it exists.
+        :returns boolean: True if store is successfully removed.
+        """
         for store in self.stores:
-            if store.name == store_name:
+            if store.name.lower() == store_name.lower():
                 self.stores.remove(store)
+                return True
 
     def load_stores(self, path_to_file):
         """Read the file containing Stores and add to list."""
