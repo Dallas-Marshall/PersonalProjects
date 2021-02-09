@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import getpass
 
 from Item import Item
 from catalogue import Catalogue
@@ -20,7 +19,7 @@ async def on_ready():
     print('Bot is ready.')
 
 
-@client.command(aliases=['store', 's', 'S', 'list_stores', 'list_s', 'shops'])
+@client.command(name='list_stores', aliases=['stores', 'list_shops', 'shops', 'Stores', 'Shops'])
 async def stores(ctx):
     catalogue = Catalogue()
     catalogue.load_stores(PATH_TO_DATA_FILE)
@@ -31,21 +30,25 @@ async def stores(ctx):
     await ctx.send(embed=embed)
 
 
-@client.command(aliases=['add_s', 's+', 'add_shop', 'addshop', 'addstore'])
+@client.command(name='add_store', aliases=['addstore', 'add_shop', 'addshop', 'add_s'])
 async def add_store(ctx, *, details):
     shop_details = details.split(':')
-    shop_name = shop_details[0].strip()
-    shop_location_x = shop_details[1].strip()
-    shop_location_y = shop_details[2].strip()
-    shop_description = shop_details[3].strip()
-    catalogue = Catalogue()
-    catalogue.load_stores(PATH_TO_DATA_FILE)
-    catalogue.add_store(Store(shop_name, shop_location_x, shop_location_y, shop_description))
-    catalogue.save_stores(PATH_TO_DATA_FILE)
-    await stores(ctx)
+    if len(shop_details) != 4:
+        await ctx.send("Error: Incorrect Formatting")
+        await help(ctx, 'add_store')
+    else:
+        shop_name = shop_details[0].strip()
+        shop_location_x = shop_details[1].strip()
+        shop_location_y = shop_details[2].strip()
+        shop_description = shop_details[3].strip()
+        catalogue = Catalogue()
+        catalogue.load_stores(PATH_TO_DATA_FILE)
+        catalogue.add_store(Store(shop_name, shop_location_x, shop_location_y, shop_description))
+        catalogue.save_stores(PATH_TO_DATA_FILE)
+        await stores(ctx)
 
 
-@client.command(aliases=["list", "List", "Inv", "inv", "list_inv", "List_Inv"])
+@client.command(name='list_inventory', aliases=["list", "List", "Inv", "inv", "list_inv", "List_Inv", 'stock', 'Stock'])
 async def list_inventory(ctx, *, store_name):
     catalogue = Catalogue()
     catalogue.load_stores(PATH_TO_DATA_FILE)
@@ -59,22 +62,27 @@ async def list_inventory(ctx, *, store_name):
             await ctx.send(embed=embed)
 
 
-@client.command(aliases=['s-', 'removestore', 'remove_shop', 'removeshop'])
+@client.command(name='remove_store', aliases=['removestore', 'remove_shop', 'removeshop', 'remove_s'])
 async def remove_store(ctx, *, store_name):
     catalogue = Catalogue()
     catalogue.load_stores(PATH_TO_DATA_FILE)
-    for store in catalogue.list_stores():
-        if store.name.lower() == store_name.strip().lower():
-            catalogue.remove_store(store.name)
-            catalogue.save_stores(PATH_TO_DATA_FILE)
-    await stores(ctx)
+    # Attempt to remove store from catalogue.
+    is_removed = catalogue.remove_store(store_name)
+    if not is_removed:
+        embed = discord.Embed(title=f'Store: \'{store_name}\' cannot be found', color=13424046)
+        await ctx.send(embed=embed)
+    else:
+        # Update save file
+        catalogue.save_stores(PATH_TO_DATA_FILE)
+        embed = discord.Embed(title='Store Removed Successfully', color=13424046)
+        await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(name='sell', aliases=['add_item', 'additem', 'Sell'])
 async def add_item(ctx, *, details):
     item_details = details.split(':')
     embed = discord.Embed()
-    if len(item_details) == 4:
+    if len(item_details) == 4:  # Correct number of arguments given
         store_name = item_details[0].strip()
         item_name = item_details[1].strip()
         item_quantity = item_details[2].strip()
@@ -90,6 +98,7 @@ async def add_item(ctx, *, details):
                 # Add new Item to store inventory
                 new_item = Item(item_name, item_quantity, int(item_cost))
                 store.inventory.add_item(new_item)
+
                 # Update save file
                 catalogue.save_stores(PATH_TO_DATA_FILE)
                 embed = discord.Embed(title='Item Added Successfully', color=13424046)
@@ -99,26 +108,27 @@ async def add_item(ctx, *, details):
             embed = discord.Embed(title=f'Store: \'{store_name}\' cannot be found', color=13424046)
     else:
         embed = discord.Embed(title="Error: Please use the following format", color=13424046)
-        embed.add_field(name="!add_item <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>",
-                        value="e.g. !add_item All Australian Wool : Red Wool : 2 Stacks : 1", inline=False)
+        embed.add_field(name="!sell <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>",
+                        value="e.g. !sell All Australian Wool : Red Wool : 2 Stacks : 1", inline=False)
         embed.add_field(name="Red Wool", value="2 Stacks / 1D")
     await ctx.send(embed=embed)
 
 
 @client.command(pass_context=True)
 async def help(ctx, *args):
-    embed = discord.Embed(title="Meloncraft Bot Help:", color=13424046)
-    if len(args) == 0:  # command not specified
+    embed = discord.Embed(title="Meloncraft Commands List:", color=13424046)
+    if len(args) == 0:  # Command not specified
         embed.add_field(name="!stores", value="Returns list of all stores.", inline=False)
         embed.add_field(name="!add_store", value="Adds Store to list of stores.", inline=False)
         embed.add_field(name="!remove_store", value="Removes Store from list of stores.", inline=False)
         embed.add_field(name="!list_inventory", value="Returns list of items for sale at Store.", inline=False)
-        embed.add_field(name="!add_item", value="Adds an Item to list of items for sale at Store.", inline=False)
+        embed.add_field(name="!sell", value="Adds an Item to list of items for sale at Store.", inline=False)
         embed.add_field(name="!remove_item", value="Removes an Item to list of items for sale at Store.", inline=False)
         embed.add_field(name="!update_item", value="Updates an existing Item in Stores inventory.", inline=False)
         embed.add_field(name="For detailed command specific help:", value="Use !help <command_name> e.g. !help stores",
                         inline=False)
-    elif len(args) == 1:  # command specified
+    elif len(args) == 1:  # Command specified
+        embed = discord.Embed(title="Meloncraft Commands Help:", color=13424046)
         requested_command_name = args[0]
         if requested_command_name == "stores":
             embed.add_field(name="!stores", value="Returns list of all stores.", inline=False)
@@ -133,7 +143,7 @@ async def help(ctx, *args):
             embed.add_field(name="!list_inventory <Store_Name>",
                             value="e.g. !list_inventory All Australian Wool", inline=False)
         elif requested_command_name == "add_item":
-            embed.add_field(name="!add_item <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>",
+            embed.add_field(name="!sell <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>",
                             value="e.g. !add_item All Australian Wool : Red Wool : 2 Stacks : 1", inline=False)
         elif requested_command_name == "remove_item":
             embed.add_field(name="!remove_item <Store_Name> : <Item_Name>",
@@ -143,21 +153,21 @@ async def help(ctx, *args):
                 name="!update_item <Store_Name> : <Old_Item_Name> : <New_Item_Name> : <New_Item_Quantity> : "
                      "<New_Item_Cost>",
                 value="\t!update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
-        else:  # unknown command
+        else:  # Unknown command
             embed = discord.Embed(title="Error", color=13424046)
             embed.add_field(name=f'Command \'{requested_command_name}\', could not be found.',
                             value="Use !help for a list of commands.", inline=False)
-    elif len(args) > 1:  # too many inputs
+    elif len(args) > 1:  # Too many inputs
         embed = discord.Embed(title="Error: Please use the following format", color=13424046)
         embed.add_field(name="!help <command>", value="e.g. !help list_inventory", inline=False)
     await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(name='remove_item', aliases=['delete_item', 'removeitem', 'deleteitem'])
 async def remove_item(ctx, *, details):
     item_details = details.split(':')
     embed = discord.Embed()
-    if len(item_details) == 2:
+    if len(item_details) == 2:  # Correct number of arguments given
         store_name = item_details[0].strip()
         item_name = item_details[1].strip()
 
@@ -175,6 +185,7 @@ async def remove_item(ctx, *, details):
                     # Update save file
                     catalogue.save_stores(PATH_TO_DATA_FILE)
                     embed = discord.Embed(title='Item Removed Successfully', color=13424046)
+
         if not is_valid_store_name:
             embed = discord.Embed(title=f'Store Name: \'{store_name}\' cannot be found', color=13424046)
     else:
@@ -184,11 +195,11 @@ async def remove_item(ctx, *, details):
     await ctx.send(embed=embed)
 
 
-@client.command(aliases=['edit_item', 'edit', 'update'])
+@client.command(name='update_item', aliases=['edit_item', 'edititem', 'updateitem'])
 async def update_item(ctx, *, details):
     item_details = details.split(':')
     embed = discord.Embed()
-    if len(item_details) == 5:  # Enough arguments provided
+    if len(item_details) == 5:  # Correct number of arguments provided
         store_name = item_details[0].strip()
         old_item_name = item_details[1].strip()
         new_item_name = item_details[2].strip()
@@ -226,7 +237,7 @@ async def update_item(ctx, *, details):
     await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(name='find', aliases=['find_item', 'locate', 'finditem', 'locateitem', 'locate_item'])
 async def find_item(ctx, *, item_name):
     number_of_instances_found = 0
     catalogue = Catalogue()
@@ -235,13 +246,27 @@ async def find_item(ctx, *, item_name):
     embed = discord.Embed(title=f'\'{item_name}\' was found in stock at:', color=13424046)
     for store in catalogue.list_stores():
         for item in store.inventory.list_items():
-            if item_name.lower() == item.name.lower():
+            if item_name.lower() == item.name.lower():  # Matching item
                 number_of_instances_found += 1
                 embed.add_field(name=store.name, value=f'{item.name} - {item.quantity} / {item.cost}D', inline=False)
 
     if number_of_instances_found == 0:  # No matching items found
         embed = discord.Embed(title=f'\'{item_name}\' was not found in stock anywhere!', color=13424046)
     await ctx.send(embed=embed)
+
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        embed = discord.Embed(title="Incorrect Command Usage", color=13424046)
+        embed.add_field(name="For Command Specific Help Use", value="!help <command> e.g. !help list_inventory",
+                        inline=False)
+        await ctx.send(embed=embed)
+    elif isinstance(error, commands.CommandNotFound):
+        await ctx.send("Error: Invalid Command")
+        await help(ctx)
+    else:
+        raise error
 
 
 client.run('TOKEN GOES HERE')
