@@ -23,7 +23,7 @@ async def on_ready():
 async def stores(ctx):
     catalogue = Catalogue()
     catalogue.load_stores(PATH_TO_DATA_FILE)
-    embed = discord.Embed(title="MelonCraft Shops", color=0xff0000)
+    embed = discord.Embed(title="MelonCraft Shops", color=13424046)
     for shop in catalogue.list_stores():
         embed.add_field(name=shop.name, value=f'{shop.description} ({shop.location_x},{shop.location_y})',
                         inline=False)
@@ -50,7 +50,7 @@ async def list_inventory(ctx, *, store_name):
     catalogue.load_stores(PATH_TO_DATA_FILE)
     for store in catalogue.list_stores():
         if store.name.lower() == store_name.lower():
-            embed = discord.Embed(title=f'{store.name}', color=0xff0000)
+            embed = discord.Embed(title=f'{store.name}', color=13424046)
             if store.inventory.__len__() == 0:
                 embed.add_field(name="Currently has no Stock!", value="Please check back later.", inline=False)
             for item in store.inventory.list_items():
@@ -91,13 +91,13 @@ async def add_item(ctx, *, details):
                 store.inventory.add_item(new_item)
                 # Update save file
                 catalogue.save_stores(PATH_TO_DATA_FILE)
-                embed = discord.Embed(title='Item Added Successfully', color=0xff0000)
+                embed = discord.Embed(title='Item Added Successfully', color=13424046)
                 embed.add_field(name=f'{item_name}', value=f'{item_quantity} / {item_cost}D')
 
         if not is_valid_store_name:
-            embed = discord.Embed(title=f'Store: \'{store_name}\' cannot be found', color=0xff0000)
+            embed = discord.Embed(title=f'Store: \'{store_name}\' cannot be found', color=13424046)
     else:
-        embed = discord.Embed(title="Error: Please use the following format", color=0xff0000)
+        embed = discord.Embed(title="Error: Please use the following format", color=13424046)
         embed.add_field(name="!add_item <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>",
                         value="e.g. !add_item All Australian Wool : Red Wool : 2 Stacks : 1", inline=False)
         embed.add_field(name="Red Wool", value="2 Stacks / 1D")
@@ -106,7 +106,7 @@ async def add_item(ctx, *, details):
 
 @client.command(pass_context=True)
 async def help(ctx, *args):
-    embed = discord.Embed(title="Meloncraft Bot Help:", color=0xff0000)
+    embed = discord.Embed(title="Meloncraft Bot Help:", color=13424046)
     if len(args) == 0:  # command not specified
         embed.add_field(name="!stores", value="Returns list of all stores.", inline=False)
         embed.add_field(name="!add_store", value="Adds Store to list of stores.", inline=False)
@@ -143,11 +143,11 @@ async def help(ctx, *args):
                      "<New_Item_Cost>",
                 value="\t!update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
         else:  # unknown command
-            embed = discord.Embed(title="Error", color=0xff0000)
+            embed = discord.Embed(title="Error", color=13424046)
             embed.add_field(name=f'Command \'{requested_command_name}\', could not be found.',
                             value="Use !help for a list of commands.", inline=False)
     elif len(args) > 1:  # too many inputs
-        embed = discord.Embed(title="Error: Please use the following format", color=0xff0000)
+        embed = discord.Embed(title="Error: Please use the following format", color=13424046)
         embed.add_field(name="!help <command>", value="e.g. !help list_inventory", inline=False)
     await ctx.send(embed=embed)
 
@@ -169,15 +169,15 @@ async def remove_item(ctx, *, details):
                 # Attempt to remove Item from store inventory
                 is_removed = store.inventory.remove_item(item_name)
                 if not is_removed:
-                    embed = discord.Embed(title=f'Item: \'{item_name}\' cannot be found', color=0xff0000)
+                    embed = discord.Embed(title=f'Item: \'{item_name}\' cannot be found', color=13424046)
                 else:
                     # Update save file
                     catalogue.save_stores(PATH_TO_DATA_FILE)
-                    embed = discord.Embed(title='Item Removed Successfully', color=0xff0000)
+                    embed = discord.Embed(title='Item Removed Successfully', color=13424046)
         if not is_valid_store_name:
-            embed = discord.Embed(title=f'Store Name: \'{store_name}\' cannot be found', color=0xff0000)
+            embed = discord.Embed(title=f'Store Name: \'{store_name}\' cannot be found', color=13424046)
     else:
-        embed = discord.Embed(title="Error: Please use the following format", color=0xff0000)
+        embed = discord.Embed(title="Error: Please use the following format", color=13424046)
         embed.add_field(name="!remove_item <Store_Name> : <Item_Name>",
                         value="\te.g. !remove_item All Australian Wool : Red Wool", inline=False)
     await ctx.send(embed=embed)
@@ -203,7 +203,7 @@ async def update_item(ctx, *, details):
                 # Attempt to remove old Item from inventory
                 is_removed = store.inventory.remove_item(old_item_name)
                 if not is_removed:
-                    embed = discord.Embed(title=f'Item: \'{old_item_name}\' cannot be found', color=0xff0000)
+                    embed = discord.Embed(title=f'Item: \'{old_item_name}\' cannot be found', color=13424046)
                 else:
                     # Add updated Item
                     updated_item = Item(new_item_name, new_item_quantity, new_item_cost)
@@ -211,13 +211,13 @@ async def update_item(ctx, *, details):
 
                     # Update save file
                     catalogue.save_stores(PATH_TO_DATA_FILE)
-                    embed = discord.Embed(title='Item Updated Successfully', color=0xff0000)
+                    embed = discord.Embed(title='Item Updated Successfully', color=13424046)
                     embed.add_field(name=f'{new_item_name}', value=f'{new_item_quantity} / {new_item_cost}D')
 
         if not is_valid_store_name:
-            embed = discord.Embed(title=f'Store: \'{store_name}\' cannot be found', color=0xff0000)
+            embed = discord.Embed(title=f'Store: \'{store_name}\' cannot be found', color=13424046)
     else:
-        embed = discord.Embed(title="Error: Please use the following format", color=0xff0000)
+        embed = discord.Embed(title="Error: Please use the following format", color=13424046)
         embed.add_field(name="!update_item <Store_Name> : <Old_Item_Name> : <New_Item_Name> : <New_Item_Quantity> : "
                              "<New_Item_Cost>",
                         value="\t!update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
