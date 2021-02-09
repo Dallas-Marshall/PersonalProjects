@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import getpass
 
 from Item import Item
 from catalogue import Catalogue
@@ -222,6 +223,24 @@ async def update_item(ctx, *, details):
                              "<New_Item_Cost>",
                         value="\t!update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
         embed.add_field(name="Blue Wool", value="2 Stacks / 1D")
+    await ctx.send(embed=embed)
+
+
+@client.command()
+async def find_item(ctx, *, item_name):
+    number_of_instances_found = 0
+    catalogue = Catalogue()
+    catalogue.load_stores(PATH_TO_DATA_FILE)
+
+    embed = discord.Embed(title=f'\'{item_name}\' was found in stock at:', color=13424046)
+    for store in catalogue.list_stores():
+        for item in store.inventory.list_items():
+            if item_name.lower() == item.name.lower():
+                number_of_instances_found += 1
+                embed.add_field(name=store.name, value=f'{item.name} - {item.quantity} / {item.cost}D', inline=False)
+
+    if number_of_instances_found == 0:  # No matching items found
+        embed = discord.Embed(title=f'\'{item_name}\' was not found in stock anywhere!', color=13424046)
     await ctx.send(embed=embed)
 
 
