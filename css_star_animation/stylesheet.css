@@ -1,0 +1,146 @@
+.wrapper {
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 400px;
+    height: 400px;
+
+    border-radius: 2px;
+    box-shadow: 4px 8px 16px 0 rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background: dodgerblue;
+    color: #333;
+    font-family: 'Open Sans', Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.square {
+    width: 200px;
+    height: 200px;
+    border: 1px solid white;
+    position: absolute;
+
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+#square-0 {
+    animation-name: animation-0;
+}
+
+@keyframes animation-0 {
+    50% {
+        transform: rotate(180deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+#square-1 {
+    animation-name: animation-1;
+}
+
+@keyframes animation-1 {
+    50% {
+        transform: rotate(160deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+#square-2 {
+    animation-name: animation-2;
+}
+
+@keyframes animation-2 {
+    50% {
+        transform: rotate(140deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+#square-3 {
+    animation-name: animation-3;
+}
+
+@keyframes animation-3 {
+    50% {
+        transform: rotate(120deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+#square-4 {
+    animation-name: animation-4;
+}
+
+@keyframes animation-4 {
+    50% {
+        transform: rotate(100deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+#square-5 {
+    animation-name: animation-5;
+}
+
+@keyframes animation-5 {
+    50% {
+        transform: rotate(80deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+#square-6 {
+    animation-name: animation-6;
+}
+
+@keyframes animation-6 {
+    50% {
+        transform: rotate(60deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+#square-7 {
+    animation-name: animation-7;
+}
+
+@keyframes animation-7 {
+    50% {
+        transform: rotate(40deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+#square-8 {
+    animation-name: animation-8;
+}
+
+@keyframes animation-8 {
+    50% {
+        transform: rotate(20deg);
+        height: 2.5rem;
+        border-radius: 50%;
+    }
+}
+
+footer {
+    text-align: center;
+}
