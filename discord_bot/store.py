@@ -1,13 +1,13 @@
 class Store:
     """Shop class to represent details of a store."""
 
-    def __init__(self, name="", location_x=0, location_y="", description="", inventory=None):
+    def __init__(self, name="", location_x=0, location_z=0, description="", inventory=None):
         """Initialise a Store."""
         if inventory is None:
             inventory = []
         self.name = name
         self.location_x = location_x
-        self.location_y = location_y
+        self.location_z = location_z
         self.description = description
         self.inventory = inventory
 
@@ -19,7 +19,7 @@ class Store:
         """Update a Stores Description."""
         self.description = new_description
 
-    def update_location(self, location_x, location_y):
+    def update_location(self, location_x, location_z):
         """Update a Stores location."""
         self.location_x = location_x
-        self.location_y = location_y
+        self.location_z = location_z

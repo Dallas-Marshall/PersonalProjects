@@ -4,7 +4,7 @@ from store import Store
 
 INDEX_OF_NAME = 0
 INDEX_OF_LOCATION_X = 1
-INDEX_OF_LOCATION_Y = 2
+INDEX_OF_LOCATION_Z = 2
 INDEX_OF_DESCRIPTION = 3
 INDEX_OF_ITEMS = 4
 
@@ -70,10 +70,10 @@ class Catalogue:
             # Create Shop
             shop_name = line_str[INDEX_OF_NAME]
             shop_location_x = line_str[INDEX_OF_LOCATION_X]
-            shop_location_y = line_str[INDEX_OF_LOCATION_Y]
+            shop_location_z = line_str[INDEX_OF_LOCATION_Z]
             shop_description = line_str[INDEX_OF_DESCRIPTION]
 
-            shop = Store(shop_name, shop_location_x, shop_location_y, shop_description, shop_inventory)
+            shop = Store(shop_name, shop_location_x, shop_location_z, shop_description, shop_inventory)
             self.stores.append(shop)
         in_file.close()
 
@@ -81,7 +81,7 @@ class Catalogue:
         """Save Stores to file."""
         out_file = open(path_to_file, 'w')
         for shop in self.stores:
-            out_file.write(f'{shop.name},{shop.location_x},{shop.location_y},{shop.description},')
+            out_file.write(f'{shop.name},{shop.location_x},{shop.location_z},{shop.description},')
 
             if len(shop.inventory) == 0:
                 out_file.write('\n')
