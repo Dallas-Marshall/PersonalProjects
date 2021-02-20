@@ -76,6 +76,7 @@ async def remove_store(ctx, *, store_name):
         catalogue.save_stores(PATH_TO_DATA_FILE)
         embed = discord.Embed(title='Store Removed Successfully', color=13424046)
         await ctx.send(embed=embed)
+    await stores(ctx)
 
 
 @client.command(name='sell', aliases=['add_item', 'additem', 'Sell'])
