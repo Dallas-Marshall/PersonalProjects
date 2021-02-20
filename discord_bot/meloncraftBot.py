@@ -19,31 +19,31 @@ async def on_ready():
     print('Bot is ready.')
 
 
-@client.command(name='list_stores', aliases=['stores', 'list_shops', 'shops', 'Stores', 'Shops'])
+@client.command(name='list_stores', aliases=['stores', 'Stores'])
 async def stores(ctx):
     catalogue = Catalogue()
     catalogue.load_stores(PATH_TO_DATA_FILE)
-    embed = discord.Embed(title="MelonCraft Shops", color=13424046)
-    for shop in catalogue.list_stores():
-        embed.add_field(name=shop.name, value=f'{shop.description} ({shop.location_x},{shop.location_y})',
+    embed = discord.Embed(title="MelonCraft Stores", color=13424046)
+    for store in catalogue.list_stores():
+        embed.add_field(name=store.name, value=f'{store.description} ({store.location_x},{store.location_y})',
                         inline=False)
     await ctx.send(embed=embed)
 
 
-@client.command(name='add_store', aliases=['addstore', 'add_shop', 'addshop', 'add_s'])
+@client.command(name='add_store', aliases=['addstore', 'add_s'])
 async def add_store(ctx, *, details):
-    shop_details = details.split(':')
-    if len(shop_details) != 4:
+    store_details = details.split(':')
+    if len(store_details) != 4:
         await ctx.send("Error: Incorrect Formatting")
         await help(ctx, 'add_store')
     else:
-        shop_name = shop_details[0].strip()
-        shop_location_x = shop_details[1].strip()
-        shop_location_y = shop_details[2].strip()
-        shop_description = shop_details[3].strip()
+        store_name = store_details[0].strip()
+        store_location_x = store_details[1].strip()
+        store_location_y = store_details[2].strip()
+        store_description = store_details[3].strip()
         catalogue = Catalogue()
         catalogue.load_stores(PATH_TO_DATA_FILE)
-        catalogue.add_store(Store(shop_name, shop_location_x, shop_location_y, shop_description))
+        catalogue.add_store(Store(store_name, store_location_x, store_location_y, store_description))
         catalogue.save_stores(PATH_TO_DATA_FILE)
         await stores(ctx)
 
@@ -62,7 +62,7 @@ async def list_inventory(ctx, *, store_name):
             await ctx.send(embed=embed)
 
 
-@client.command(name='remove_store', aliases=['removestore', 'remove_shop', 'removeshop', 'remove_s'])
+@client.command(name='remove_store', aliases=['removestore', 'remove_s'])
 async def remove_store(ctx, *, store_name):
     catalogue = Catalogue()
     catalogue.load_stores(PATH_TO_DATA_FILE)
