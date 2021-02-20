@@ -126,6 +126,8 @@ async def help(ctx, *args):
         embed.add_field(name=".sell", value="Adds an Item to list of items for sale at Store.", inline=False)
         embed.add_field(name=".remove_item", value="Removes an Item to list of items for sale at Store.", inline=False)
         embed.add_field(name=".update_item", value="Updates an existing Item in Stores inventory.", inline=False)
+        embed.add_field(name=".update_store", value="Updates an existing Store in Catalogue.", inline=False)
+        embed.add_field(name=".bot_info", value="Gives Brief description of Bot.", inline=False)
         embed.add_field(name="For detailed command specific help:", value="Use .help <command_name> e.g. .help stores",
                         inline=False)
     elif len(args) == 1:  # Command specified
@@ -143,7 +145,7 @@ async def help(ctx, *args):
         elif requested_command_name == "list_inventory":
             embed.add_field(name=".list_inventory <Store_Name>",
                             value="e.g. .list_inventory All Australian Wool", inline=False)
-        elif requested_command_name == "add_item":
+        elif requested_command_name == "sell":
             embed.add_field(name=".sell <Store_Name> : <Item_Name> : <Quantity> : <Cost_in_Diamonds>",
                             value="e.g. .add_item All Australian Wool : Red Wool : 2 Stacks : 1", inline=False)
         elif requested_command_name == "remove_item":
@@ -160,6 +162,8 @@ async def help(ctx, *args):
                      "<New_Description>",
                 value="\t.update_store All Australian Wool : Chinese Made Wool : 50 : -234 : Cheapest Wool Possible",
                 inline=False)
+        elif requested_command_name == "bot_info":
+            embed.add_field(name=".bot_info", value="Gives Brief description of Bot.", inline=False)
         else:  # Unknown command
             embed = discord.Embed(title="Error", color=13424046)
             embed.add_field(name=f'Command \'{requested_command_name}\', could not be found.',
@@ -308,6 +312,17 @@ async def update_store(ctx, *, details):
         embed = discord.Embed(title="Error: Please use the following format", color=13424046)
         await ctx.send(embed=embed)
         await help(ctx, "update_store")
+
+
+@client.command(name="bot_info")
+async def bot_info(ctx):
+    embed = discord.Embed(title="Honeydew Discord Bot", color=13424046)
+    embed.add_field(name="Bot Creator", value="Made by mobpuncher1", inline=False)
+    embed.add_field(name="Bot Purpose",
+                    value="Display items for sale on mc.meloncraft.net as well as provide ability to find an item to "
+                          "purchase", inline=False)
+    embed.add_field(name="Bot Usage", value="Type .help to see the commands to use Honeydew")
+    await ctx.send(embed=embed)
 
 
 client.run('TOKEN GOES HERE')
