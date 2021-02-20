@@ -25,7 +25,7 @@ async def stores(ctx):
     catalogue.load_stores(PATH_TO_DATA_FILE)
     embed = discord.Embed(title="MelonCraft Stores", color=13424046)
     for store in catalogue.list_stores():
-        embed.add_field(name=store.name, value=f'{store.description} ({store.location_x},{store.location_y})',
+        embed.add_field(name=store.name, value=f'{store.description} ({store.location_x}, {store.location_z})',
                         inline=False)
     await ctx.send(embed=embed)
 
@@ -39,11 +39,11 @@ async def add_store(ctx, *, details):
     else:
         store_name = store_details[0].strip()
         store_location_x = store_details[1].strip()
-        store_location_y = store_details[2].strip()
+        store_location_z = store_details[2].strip()
         store_description = store_details[3].strip()
         catalogue = Catalogue()
         catalogue.load_stores(PATH_TO_DATA_FILE)
-        catalogue.add_store(Store(store_name, store_location_x, store_location_y, store_description))
+        catalogue.add_store(Store(store_name, store_location_x, store_location_z, store_description))
         catalogue.save_stores(PATH_TO_DATA_FILE)
         await stores(ctx)
 
@@ -134,7 +134,7 @@ async def help(ctx, *args):
         if requested_command_name == "stores":
             embed.add_field(name=".stores", value="Returns list of all stores.", inline=False)
         elif requested_command_name == "add_store":
-            embed.add_field(name=".add_store <Store_Name> : <x-Coord> : <y-Coord> : <Description>",
+            embed.add_field(name=".add_store <Store_Name> : <x_Coord> : <z_Coord> : <Description>",
                             value="e.g. .add_store All Australian Wool : 300 : 400 : All your wool Needs!",
                             inline=False)
         elif requested_command_name == "remove_store":
@@ -154,6 +154,12 @@ async def help(ctx, *args):
                 name=".update_item <Store_Name> : <Old_Item_Name> : <New_Item_Name> : <New_Item_Quantity> : "
                      "<New_Item_Cost>",
                 value="\t.update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
+        elif requested_command_name == "update_store":
+            embed.add_field(
+                name=".update_store <Old_Store_Name> : <New_Store_name> : <New_X_Coord> : <New_Z_Coord> : "
+                     "<New_Description>",
+                value="\t.update_store All Australian Wool : Chinese Made Wool : 50 : -234 : Cheapest Wool Possible",
+                inline=False)
         else:  # Unknown command
             embed = discord.Embed(title="Error", color=13424046)
             embed.add_field(name=f'Command \'{requested_command_name}\', could not be found.',
@@ -268,6 +274,40 @@ async def on_command_error(ctx, error):
         await help(ctx)
     else:
         raise error
+
+
+@client.command(name='update_store', aliases=['edit_store', 'editstore', 'updatestore'])
+async def update_store(ctx, *, details):
+    store_details = details.split(':')
+    embed = discord.Embed()
+    if len(store_details) == 5:  # Correct number of arguments provided
+        old_store_name = store_details[0].strip()
+        new_store_name = store_details[1].strip()
+        new_store_location_x = store_details[2].strip()
+        new_store_location_z = store_details[3].strip()
+        new_store_description = store_details[4].strip()
+        catalogue = Catalogue()
+        catalogue.load_stores(PATH_TO_DATA_FILE)
+
+        # Attempt to remove old store from catalogue.
+        is_removed = catalogue.remove_store(old_store_name)
+        if not is_removed:
+            embed = discord.Embed(title=f'Store: \'{old_store_name}\' cannot be found', color=13424046)
+            await ctx.send(embed=embed)
+        else:
+            # Add updated store
+            updated_store = Store(new_store_name, new_store_location_x, new_store_location_z, new_store_description)
+            catalogue.add_store(updated_store)
+
+            # Update save file
+            catalogue.save_stores(PATH_TO_DATA_FILE)
+            embed = discord.Embed(title='Store Updated Successfully', color=13424046)
+            await ctx.send(embed=embed)
+        await stores(ctx)
+    else:
+        embed = discord.Embed(title="Error: Please use the following format", color=13424046)
+        await ctx.send(embed=embed)
+        await help(ctx, "update_store")
 
 
 client.run('TOKEN GOES HERE')
