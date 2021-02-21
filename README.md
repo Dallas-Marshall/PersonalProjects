@@ -46,3 +46,5 @@
 > (primarily the CSS styling). 
 > 
 > As of time of writing this: the animation can be viewed [here](https://dev5394.d3ildzt53ob5rq.amplifyapp.com)
+> 
+> Project Finished: 19/02/2021
