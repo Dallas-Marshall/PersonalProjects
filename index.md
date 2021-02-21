@@ -30,3 +30,48 @@ Created by Dallas Marshall
 - `.help`: Provides list of commands.
 - `.help <command_name>`: Provides detailed command specific help.
   - e.g. `.help stores`
+  - Please note using `.help <command_name>` will only work with default command names and not aliases.
+
+### Command Aliases
+> Commands have one or more aliases that can be used when making a command call. There is no benefit for using a command aliases over the names stated above, simply a matter of preference for different users and all aliases will perform equally.
+
+#### .stores:
+- `.list_stores`
+- `.Stores`
+#### .add_store:
+- `.addstore`
+- `.add_s`
+#### .stock:
+- `.list`
+- `.List`
+- `.Inv`
+- `.inv`
+- `.list_inv`
+- `.List_Inv`
+- `.list_inventory`
+- `.Stock` 
+#### .remove_store:
+- `.removestore`
+- `.remove_s`
+#### .sell:
+- `.add_item`
+- `.additem`
+- `.Sell`
+#### .remove_item:
+- `.delete_item`
+- `.removeitem`
+- `.deleteitem`
+#### .update_item:
+- `.edit_item`
+- `.edititem`
+- `.updateitem`
+#### .find:
+- `.find_item`
+- `.locate`
+- `.finditem`
+- `.locateitem`
+- `.locate_item`
+#### .update_store:
+- `.edit_store`
+- `.editstore`
+- `.updatestore`
