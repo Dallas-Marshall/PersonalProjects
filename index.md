@@ -23,6 +23,9 @@ Created by Dallas Marshall
 - `.update_item`: Updates the details of an existing item in the specified store's inventory.
   - `.update_item <Store_Name> : <Old_Item_Name> : <New_Item_Name> : <New_Item_Quantity> : <New_Item_Cost>`
   - e.g. `.update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1`
+- `.find`: Returns list of stores (if any) with specified item in stock.
+  - `.find <Item_Name>`
+  - e.g. `.find Red Wool`
 - `.update_store`: Updates the details of an existing store.
   - `.update_store <Old_Store_Name> : <New_Store_name> : <New_X_Coord> : <New_Z_Coord> : <New_Description>`
   - e.g. `.update_store All Australian Wool : non-Australian Wool : 50 : -234 : Cheap Wool`
