@@ -133,6 +133,7 @@ async def help(ctx, *args):
         embed.add_field(name=".remove_item", value="Removes an Item to list of items for sale at Store.", inline=False)
         embed.add_field(name=".update_item", value="Updates an existing Item in Stores inventory.", inline=False)
         embed.add_field(name=".update_store", value="Updates an existing Store in Catalogue.", inline=False)
+        embed.add_field(name=".find", value="Returns list of stores if any with specified item in stock.")
         embed.add_field(name=".bot_info", value="Gives Brief description of Bot.", inline=False)
         embed.add_field(name="For detailed command specific help:", value="Use .help <command_name> e.g. .help stores",
                         inline=False)
@@ -157,16 +158,19 @@ async def help(ctx, *args):
         elif requested_command_name == "remove_item":
             embed.add_field(name=".remove_item <Store_Name> : <Item_Name>",
                             value="\te.g. .remove_item All Australian Wool : Red Wool", inline=False)
+        elif requested_command_name == "find":
+            embed.add_field(name=".find <Item_Name>",
+                            value="\te.g. .find Red Wool", inline=False)
         elif requested_command_name == "update_item":
             embed.add_field(
                 name=".update_item <Store_Name> : <Old_Item_Name> : <New_Item_Name> : <New_Item_Quantity> : "
                      "<New_Item_Cost>",
-                value="\t.update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
+                value="\te.g. .update_item All Australian Wool : Red Wool : Blue Wool : 2 Stacks : 1", inline=False)
         elif requested_command_name == "update_store":
             embed.add_field(
                 name=".update_store <Old_Store_Name> : <New_Store_name> : <New_X_Coord> : <New_Z_Coord> : "
                      "<New_Description>",
-                value="\t.update_store All Australian Wool : Chinese Made Wool : 50 : -234 : Cheapest Wool Possible",
+                value="\te.g. .update_store All Australian Wool : non-Australian Wool : 50 : -234 : Cheap Wool",
                 inline=False)
         elif requested_command_name == "bot_info":
             embed.add_field(name=".bot_info", value="Gives Brief description of Bot.", inline=False)
