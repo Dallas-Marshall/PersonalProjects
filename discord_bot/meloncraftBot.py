@@ -268,7 +268,7 @@ async def find_item(ctx, *, item_name):
     embed = discord.Embed(title=f'\'{item_name}\' was found in stock at:', color=13424046)
     for store in catalogue.list_stores():
         for item in store.inventory.list_items():
-            if item_name.lower() == item.name.lower():  # Matching item
+            if calculate_similarity(item_name.lower(), item.name.lower()) > .5: # Matching item
                 number_of_instances_found += 1
                 embed.add_field(name=f'{store.name} - ({store.location_x}, {store.location_z})',
                                 value=f'{item.name} - {item.quantity} / {item.cost}D', inline=False)
