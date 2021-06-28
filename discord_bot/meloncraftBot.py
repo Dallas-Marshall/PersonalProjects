@@ -4,6 +4,7 @@ from discord.ext import commands
 from Item import Item
 from catalogue import Catalogue
 from store import Store
+from similar_search import calculate_similarity
 
 PATH_TO_DATA_FILE = "store_saves.csv"
 
@@ -269,7 +270,8 @@ async def find_item(ctx, *, item_name):
         for item in store.inventory.list_items():
             if item_name.lower() == item.name.lower():  # Matching item
                 number_of_instances_found += 1
-                embed.add_field(name=store.name, value=f'{item.name} - {item.quantity} / {item.cost}D', inline=False)
+                embed.add_field(name=f'{store.name} - ({store.location_x}, {store.location_z})',
+                                value=f'{item.name} - {item.quantity} / {item.cost}D', inline=False)
 
     if number_of_instances_found == 0:  # No matching items found
         embed = discord.Embed(title=f'\'{item_name}\' was not found in stock anywhere!', color=13424046)
