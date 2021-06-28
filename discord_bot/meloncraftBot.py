@@ -336,4 +336,11 @@ async def bot_info(ctx):
     await ctx.send(embed=embed)
 
 
+@client.command(name='dynmap')
+async def dynmap(ctx):
+    embed = discord.Embed(title='Meloncraft Dynmap', color=13424046)
+    embed.add_field(name='You can find our dynmap here:', value='http://139.99.176.130:8124/index.html', inline=False)
+    await ctx.send(embed=embed)
+
+
 client.run('TOKEN GOES HERE')
